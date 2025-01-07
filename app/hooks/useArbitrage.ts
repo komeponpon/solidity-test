@@ -10,6 +10,11 @@ interface ExecuteArbitrageParams {
   uniswapFee: number
 }
 
+interface ProfitabilityResult {
+  isProfitable: boolean
+  expectedProfit: bigint
+}
+
 const formatError = (error: unknown): string => {
   if (error instanceof Error) {
     if (error.message.includes('insufficient funds')) {
@@ -23,12 +28,12 @@ const formatError = (error: unknown): string => {
   return 'エラーが発生しました'
 }
 
-// デッドラインの計算を関数として分離
 const calculateDeadline = () => {
-  // クライアントサイドでのみ実行
   if (typeof window === 'undefined') return BigInt(0)
-  return BigInt(Math.floor(Date.now() / 1000) + 60 * 20) // 20分後
+  return BigInt(Math.floor(Date.now() / 1000) + 60 * 20)
 }
+
+const SLIPPAGE_TOLERANCE = 0.5 // 0.5%
 
 export function useArbitrage() {
   const publicClient = usePublicClient()
@@ -47,8 +52,32 @@ export function useArbitrage() {
     uniswapFee
   }: ExecuteArbitrageParams) => {
     if (!writeContract) throw new Error('コントラクトの初期化に失敗しました')
+    if (!publicClient) throw new Error('ネットワーク接続に失敗しました')
 
     try {
+      // 取引前に収益性をチェック
+      const profitCheck = await publicClient.simulateContract({
+        address: ARBITRAGE_CONTRACT_ADDRESS as `0x${string}`,
+        abi: arbitrageABI,
+        functionName: 'checkProfitability',
+        args: [
+          tokenA as `0x${string}`,
+          tokenB as `0x${string}`,
+          parseEther(amount),
+          uniswapFee
+        ]
+      })
+
+      // 収益性チェックの結果を確認
+      if (!profitCheck.result) throw new Error('収益性の確認に失敗しました')
+
+      const result = profitCheck.result as unknown as [boolean, bigint]
+      const [isProfitable, expectedProfit] = result
+
+      if (!isProfitable) {
+        throw new Error('現在の価格差では収益が見込めません')
+      }
+
       const tx = await writeContract({
         abi: arbitrageABI,
         address: ARBITRAGE_CONTRACT_ADDRESS as `0x${string}`,
@@ -61,7 +90,7 @@ export function useArbitrage() {
           calculateDeadline()
         ]
       })
-      return tx
+      return { tx, expectedProfit }
     } catch (err) {
       console.error('アービトラージの実行に失敗しました:', err)
       throw new Error(formatError(err))

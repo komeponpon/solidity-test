@@ -60,6 +60,25 @@ export function ArbitragePanel() {
     window.open('https://faucet.polygon.technology/', '_blank')
   }
 
+  function ProfitabilityIndicator({ isProfitable, expectedProfit }: {
+    isProfitable: boolean
+    expectedProfit: string
+  }) {
+    return (
+      <div className="mt-4 p-4 bg-white/10 rounded-md">
+        <div className="space-y-2">
+          <p className="text-white font-medium">予想収益</p>
+          <div className="flex items-baseline space-x-2">
+            <span className={`text-2xl font-bold ${isProfitable ? 'text-green-300' : 'text-red-300'}`}>
+              {expectedProfit}
+            </span>
+            <span className="text-white/70">{selectedPair.name.split('/')[0]}</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!account) {
     return (
       <div className="p-6 max-w-lg mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
@@ -179,6 +198,8 @@ export function ArbitragePanel() {
         </div>
 
         <GasEstimate gasEstimate={gasEstimate} />
+
+        <ProfitabilityIndicator isProfitable={true} expectedProfit="0.01" />
       </div>
     </div>
   )
