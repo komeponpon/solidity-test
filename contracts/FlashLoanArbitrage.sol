@@ -7,7 +7,7 @@ import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contract
 
 contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
     address public owner;
-    
+
     constructor(address _addressProvider) FlashLoanSimpleReceiverBase(IPoolAddressesProvider(_addressProvider)) {
         owner = msg.sender;
     }
@@ -25,7 +25,7 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
 
         // ローンの返済に必要な金額を計算
         uint256 amountToRepay = amount + premium;
-        
+
         // ローンの返済を承認
         IERC20(asset).approve(address(POOL), amountToRepay);
 
@@ -46,4 +46,4 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
     function getBalance(address token) external view returns (uint256) {
         return IERC20(token).balanceOf(address(this));
     }
-} 
+}

@@ -32,7 +32,6 @@ export function ArbitragePanel() {
   return (
     <div className="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold mb-4">Flash Loan Arbitrage</h2>
-      
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">

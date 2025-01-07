@@ -15,9 +15,10 @@ const config: HardhatUserConfig = {
     }
   },
   networks: {
-    sepolia: {
-      url: process.env.SEPOLIA_URL || "",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+    amoy: {
+      url: process.env.AMOY_URL || "",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 80002
     },
     mainnet: {
       url: process.env.MAINNET_URL || "",
@@ -25,7 +26,19 @@ const config: HardhatUserConfig = {
     }
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: {
+      amoy: process.env.POLYGONSCAN_API_KEY || ""
+    },
+    customChains: [
+      {
+        network: "amoy",
+        chainId: 80002,
+        urls: {
+          apiURL: "https://api-amoy.polygonscan.com/api",
+          browserURL: "https://amoy.polygonscan.com"
+        }
+      }
+    ]
   }
 };
 
