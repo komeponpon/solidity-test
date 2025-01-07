@@ -1,7 +1,7 @@
 import { ethers, run } from "hardhat";
 
 async function main() {
-  const AAVE_POOL_ADDRESS_PROVIDER = "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e"; // Mainnet
+  const AAVE_POOL_ADDRESS_PROVIDER = "0x4CeDCB57Af02293231BAA9D39354D6BFDFD251e0"; // Amoyテストネット用のAaveプールアドレスプロバイダー
 
   console.log("Deploying FlashLoanArbitrage contract...");
 

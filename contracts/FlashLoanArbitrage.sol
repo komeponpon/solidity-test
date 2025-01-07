@@ -16,8 +16,8 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
         address asset,
         uint256 amount,
         uint256 premium,
-        address initiator,
-        bytes calldata params
+        address _initiator,
+        bytes calldata _params
     ) external override returns (bool) {
         // アービトラージロジックをここに実装
         // 1. Uniswapで取引
