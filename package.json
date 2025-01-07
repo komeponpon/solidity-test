@@ -9,11 +9,14 @@
   },
   "devDependencies": {
     "@aave/core-v3": "^1.19.3",
+    "@balancer-labs/v2-interfaces": "^0.4.0",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@openzeppelin/contracts": "^5.1.0",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
+    "@uniswap/v3-periphery": "^1.4.4",
     "dotenv": "^16.4.7",
     "hardhat": "^2.22.17",
     "solhint": "^5.0.4"

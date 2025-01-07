@@ -14,55 +14,127 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "IAuthentication",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAuthentication__factory>;
+    getContractFactory(
+      name: "ISignaturesValidator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISignaturesValidator__factory>;
+    getContractFactory(
+      name: "ITemporarilyPausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITemporarilyPausable__factory>;
+    getContractFactory(
+      name: "IWETH",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWETH__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "FlashLoanSimpleReceiverBase",
+      name: "IAuthorizer",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FlashLoanSimpleReceiverBase__factory>;
+    ): Promise<Contracts.IAuthorizer__factory>;
     getContractFactory(
-      name: "IFlashLoanSimpleReceiver",
+      name: "IFlashLoanRecipient",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IFlashLoanSimpleReceiver__factory>;
+    ): Promise<Contracts.IFlashLoanRecipient__factory>;
     getContractFactory(
-      name: "IPool",
+      name: "IProtocolFeesCollector",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IPool__factory>;
+    ): Promise<Contracts.IProtocolFeesCollector__factory>;
     getContractFactory(
-      name: "IPoolAddressesProvider",
+      name: "IVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IPoolAddressesProvider__factory>;
+    ): Promise<Contracts.IVault__factory>;
+    getContractFactory(
+      name: "IUniswapV2Router01",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV2Router01__factory>;
+    getContractFactory(
+      name: "IUniswapV2Router02",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV2Router02__factory>;
+    getContractFactory(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
+    getContractFactory(
+      name: "ISwapRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapRouter__factory>;
     getContractFactory(
       name: "FlashLoanArbitrage",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FlashLoanArbitrage__factory>;
 
     getContractAt(
+      name: "IAuthentication",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAuthentication>;
+    getContractAt(
+      name: "ISignaturesValidator",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISignaturesValidator>;
+    getContractAt(
+      name: "ITemporarilyPausable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITemporarilyPausable>;
+    getContractAt(
+      name: "IWETH",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWETH>;
+    getContractAt(
       name: "IERC20",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "FlashLoanSimpleReceiverBase",
+      name: "IAuthorizer",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.FlashLoanSimpleReceiverBase>;
+    ): Promise<Contracts.IAuthorizer>;
     getContractAt(
-      name: "IFlashLoanSimpleReceiver",
+      name: "IFlashLoanRecipient",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IFlashLoanSimpleReceiver>;
+    ): Promise<Contracts.IFlashLoanRecipient>;
     getContractAt(
-      name: "IPool",
+      name: "IProtocolFeesCollector",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IPool>;
+    ): Promise<Contracts.IProtocolFeesCollector>;
     getContractAt(
-      name: "IPoolAddressesProvider",
+      name: "IVault",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IPoolAddressesProvider>;
+    ): Promise<Contracts.IVault>;
+    getContractAt(
+      name: "IUniswapV2Router01",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV2Router01>;
+    getContractAt(
+      name: "IUniswapV2Router02",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV2Router02>;
+    getContractAt(
+      name: "IUniswapV3SwapCallback",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    getContractAt(
+      name: "ISwapRouter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapRouter>;
     getContractAt(
       name: "FlashLoanArbitrage",
       address: string | ethers.Addressable,
@@ -70,55 +142,127 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.FlashLoanArbitrage>;
 
     deployContract(
+      name: "IAuthentication",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAuthentication>;
+    deployContract(
+      name: "ISignaturesValidator",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISignaturesValidator>;
+    deployContract(
+      name: "ITemporarilyPausable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITemporarilyPausable>;
+    deployContract(
+      name: "IWETH",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWETH>;
+    deployContract(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
-      name: "FlashLoanSimpleReceiverBase",
+      name: "IAuthorizer",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FlashLoanSimpleReceiverBase>;
+    ): Promise<Contracts.IAuthorizer>;
     deployContract(
-      name: "IFlashLoanSimpleReceiver",
+      name: "IFlashLoanRecipient",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IFlashLoanSimpleReceiver>;
+    ): Promise<Contracts.IFlashLoanRecipient>;
     deployContract(
-      name: "IPool",
+      name: "IProtocolFeesCollector",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IPool>;
+    ): Promise<Contracts.IProtocolFeesCollector>;
     deployContract(
-      name: "IPoolAddressesProvider",
+      name: "IVault",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IPoolAddressesProvider>;
+    ): Promise<Contracts.IVault>;
+    deployContract(
+      name: "IUniswapV2Router01",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV2Router01>;
+    deployContract(
+      name: "IUniswapV2Router02",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV2Router02>;
+    deployContract(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    deployContract(
+      name: "ISwapRouter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapRouter>;
     deployContract(
       name: "FlashLoanArbitrage",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FlashLoanArbitrage>;
 
     deployContract(
+      name: "IAuthentication",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAuthentication>;
+    deployContract(
+      name: "ISignaturesValidator",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISignaturesValidator>;
+    deployContract(
+      name: "ITemporarilyPausable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITemporarilyPausable>;
+    deployContract(
+      name: "IWETH",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IWETH>;
+    deployContract(
       name: "IERC20",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
-      name: "FlashLoanSimpleReceiverBase",
+      name: "IAuthorizer",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FlashLoanSimpleReceiverBase>;
+    ): Promise<Contracts.IAuthorizer>;
     deployContract(
-      name: "IFlashLoanSimpleReceiver",
+      name: "IFlashLoanRecipient",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IFlashLoanSimpleReceiver>;
+    ): Promise<Contracts.IFlashLoanRecipient>;
     deployContract(
-      name: "IPool",
+      name: "IProtocolFeesCollector",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IPool>;
+    ): Promise<Contracts.IProtocolFeesCollector>;
     deployContract(
-      name: "IPoolAddressesProvider",
+      name: "IVault",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IPoolAddressesProvider>;
+    ): Promise<Contracts.IVault>;
+    deployContract(
+      name: "IUniswapV2Router01",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV2Router01>;
+    deployContract(
+      name: "IUniswapV2Router02",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV2Router02>;
+    deployContract(
+      name: "IUniswapV3SwapCallback",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    deployContract(
+      name: "ISwapRouter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISwapRouter>;
     deployContract(
       name: "FlashLoanArbitrage",
       args: any[],

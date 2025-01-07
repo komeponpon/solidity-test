@@ -1,8 +1,11 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 
 dotenv.config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -15,23 +18,19 @@ const config: HardhatUserConfig = {
     }
   },
   networks: {
-    amoy: {
-      url: process.env.AMOY_URL || "",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 80002
-    },
-    mainnet: {
-      url: process.env.MAINNET_URL || "",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+    polygonAmoy: {
+      url: "https://rpc-amoy.polygon.technology",
+      accounts: [PRIVATE_KEY],
+      chainId: 80002,
     }
   },
   etherscan: {
     apiKey: {
-      amoy: process.env.POLYGONSCAN_API_KEY || ""
+      polygonAmoy: POLYGONSCAN_API_KEY
     },
     customChains: [
       {
-        network: "amoy",
+        network: "polygonAmoy",
         chainId: 80002,
         urls: {
           apiURL: "https://api-amoy.polygonscan.com/api",

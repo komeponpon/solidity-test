@@ -1,86 +1,29 @@
-import { ethers, run } from "hardhat";
+import { ethers } from "hardhat";
 
 async function main() {
-  try {
-    // Amoyテストネット用のAaveプールアドレスプロバイダー
-    const AAVE_POOL_ADDRESS_PROVIDER = "0x4CeDCB57Af02293231BAA9D39354D6BFDFD251e0";
+  // Polygon Amoy Testnet addresses
+  const BALANCER_VAULT = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
+  const UNISWAP_ROUTER = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
+  const SUSHISWAP_ROUTER = "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506";
 
-    console.log("Deploying FlashLoanArbitrage contract...");
-    console.log("Using Pool Address Provider:", AAVE_POOL_ADDRESS_PROVIDER);
+  console.log("Deploying FlashLoanArbitrage contract...");
 
-    const [deployer] = await ethers.getSigners();
-    console.log("Deploying with account:", await deployer.getAddress());
-    const balance = await deployer.provider.getBalance(deployer.getAddress());
-    console.log("Account balance:", balance.toString());
+  const FlashLoanArbitrage = await ethers.getContractFactory("FlashLoanArbitrage");
+  const flashLoanArbitrage = await FlashLoanArbitrage.deploy(
+    BALANCER_VAULT,
+    UNISWAP_ROUTER,
+    SUSHISWAP_ROUTER
+  );
 
-    if (balance.toString() === "0") {
-      throw new Error("Deployer account has no balance");
-    }
+  await flashLoanArbitrage.waitForDeployment();
 
-    const FlashLoanArbitrage = await ethers.getContractFactory("FlashLoanArbitrage");
-    console.log("Deploying contract...");
-
-    // デプロイ前にガス見積もりを取得
-    try {
-      const deployTx = await FlashLoanArbitrage.getDeployTransaction(AAVE_POOL_ADDRESS_PROVIDER);
-      const gasEstimate = await deployer.estimateGas(deployTx);
-      console.log("Estimated deployment gas:", gasEstimate.toString());
-
-      // ガス制限とガス価格を指定してデプロイ
-      const flashLoanArbitrage = await FlashLoanArbitrage.deploy(
-        AAVE_POOL_ADDRESS_PROVIDER,
-        {
-          gasLimit: Math.ceil(Number(gasEstimate) * 1.2), // 20%余裕を持たせる
-          maxFeePerGas: ethers.parseUnits("100", "gwei"), // ガス価格の上限を設定
-          maxPriorityFeePerGas: ethers.parseUnits("2", "gwei") // 優先手数料の上限を設定
-        }
-      );
-
-      console.log("Waiting for deployment transaction...");
-      await flashLoanArbitrage.waitForDeployment();
-
-      const address = await flashLoanArbitrage.getAddress();
-      console.log("FlashLoanArbitrage deployed to:", address);
-
-      // 検証のために30秒待機
-      console.log("Waiting for 30 seconds before verification...");
-      await new Promise(resolve => setTimeout(resolve, 30000));
-
-      // コントラクトを検証
-      console.log("Verifying contract...");
-      try {
-        await run("verify:verify", {
-          address: address,
-          constructorArguments: [AAVE_POOL_ADDRESS_PROVIDER],
-        });
-        console.log("Contract verified successfully");
-      } catch (error: any) {
-        console.error("Error verifying contract:", error.message);
-      }
-    } catch (error: any) {
-      console.error("Gas estimation or deployment failed:", error.message);
-      if (error.error?.message) {
-        console.error("Inner error:", error.error.message);
-      }
-      throw error;
-    }
-  } catch (error: any) {
-    console.error("Deployment failed with error:");
-    console.error(error.message);
-    if (error.error?.message) {
-      console.error("Inner error message:", error.error.message);
-    }
-    if (error.data) {
-      console.error("Error data:", error.data);
-    }
-    if (error.transaction) {
-      console.error("Transaction:", error.transaction);
-    }
-    throw error;
-  }
+  const address = await flashLoanArbitrage.getAddress();
+  console.log(`FlashLoanArbitrage deployed to: ${address}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-}); 
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  }); 

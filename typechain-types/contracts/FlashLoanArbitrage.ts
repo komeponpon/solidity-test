@@ -8,6 +8,7 @@ import type {
   FunctionFragment,
   Result,
   Interface,
+  EventFragment,
   AddressLike,
   ContractRunner,
   ContractMethod,
@@ -17,6 +18,7 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
+  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
 } from "../common";
@@ -24,48 +26,117 @@ import type {
 export interface FlashLoanArbitrageInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "ADDRESSES_PROVIDER"
-      | "POOL"
-      | "executeOperation"
-      | "getBalance"
+      | "BPS_DENOMINATOR"
+      | "MIN_PROFIT_BPS"
+      | "checkProfitability"
+      | "emergencyWithdraw"
+      | "executeArbitrage"
       | "owner"
-      | "requestFlashLoan"
+      | "receiveFlashLoan"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic: "ArbitrageExecuted" | "PriceChecked"
+  ): EventFragment;
+
   encodeFunctionData(
-    functionFragment: "ADDRESSES_PROVIDER",
+    functionFragment: "BPS_DENOMINATOR",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "POOL", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "executeOperation",
-    values: [AddressLike, BigNumberish, BigNumberish, AddressLike, BytesLike]
+    functionFragment: "MIN_PROFIT_BPS",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getBalance",
+    functionFragment: "checkProfitability",
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyWithdraw",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeArbitrage",
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "requestFlashLoan",
-    values: [AddressLike, BigNumberish]
+    functionFragment: "receiveFlashLoan",
+    values: [AddressLike[], BigNumberish[], BigNumberish[], BytesLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "ADDRESSES_PROVIDER",
+    functionFragment: "BPS_DENOMINATOR",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "POOL", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeOperation",
+    functionFragment: "MIN_PROFIT_BPS",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "checkProfitability",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyWithdraw",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeArbitrage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "requestFlashLoan",
+    functionFragment: "receiveFlashLoan",
     data: BytesLike
   ): Result;
+}
+
+export namespace ArbitrageExecutedEvent {
+  export type InputTuple = [
+    tokens: AddressLike[],
+    amounts: BigNumberish[],
+    profit: BigNumberish
+  ];
+  export type OutputTuple = [
+    tokens: string[],
+    amounts: bigint[],
+    profit: bigint
+  ];
+  export interface OutputObject {
+    tokens: string[];
+    amounts: bigint[];
+    profit: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PriceCheckedEvent {
+  export type InputTuple = [
+    token0: AddressLike,
+    token1: AddressLike,
+    uniswapPrice: BigNumberish,
+    sushiswapPrice: BigNumberish
+  ];
+  export type OutputTuple = [
+    token0: string,
+    token1: string,
+    uniswapPrice: bigint,
+    sushiswapPrice: bigint
+  ];
+  export interface OutputObject {
+    token0: string;
+    token1: string;
+    uniswapPrice: bigint;
+    sushiswapPrice: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export interface FlashLoanArbitrage extends BaseContract {
@@ -111,28 +182,48 @@ export interface FlashLoanArbitrage extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  ADDRESSES_PROVIDER: TypedContractMethod<[], [string], "view">;
+  BPS_DENOMINATOR: TypedContractMethod<[], [bigint], "view">;
 
-  POOL: TypedContractMethod<[], [string], "view">;
+  MIN_PROFIT_BPS: TypedContractMethod<[], [bigint], "view">;
 
-  executeOperation: TypedContractMethod<
+  checkProfitability: TypedContractMethod<
     [
-      asset: AddressLike,
+      tokenIn: AddressLike,
+      tokenOut: AddressLike,
       amount: BigNumberish,
-      premium: BigNumberish,
-      arg3: AddressLike,
-      arg4: BytesLike
+      uniswapFee: BigNumberish
     ],
-    [boolean],
+    [[boolean, bigint]],
     "nonpayable"
   >;
 
-  getBalance: TypedContractMethod<[token: AddressLike], [bigint], "view">;
+  emergencyWithdraw: TypedContractMethod<
+    [token: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  executeArbitrage: TypedContractMethod<
+    [
+      tokenIn: AddressLike,
+      tokenOut: AddressLike,
+      amount: BigNumberish,
+      uniswapFee: BigNumberish,
+      deadline: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
-  requestFlashLoan: TypedContractMethod<
-    [token: AddressLike, amount: BigNumberish],
+  receiveFlashLoan: TypedContractMethod<
+    [
+      tokens: AddressLike[],
+      amounts: BigNumberish[],
+      feeAmounts: BigNumberish[],
+      userData: BytesLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -142,37 +233,91 @@ export interface FlashLoanArbitrage extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "ADDRESSES_PROVIDER"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "BPS_DENOMINATOR"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "POOL"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "MIN_PROFIT_BPS"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "executeOperation"
+    nameOrSignature: "checkProfitability"
   ): TypedContractMethod<
     [
-      asset: AddressLike,
+      tokenIn: AddressLike,
+      tokenOut: AddressLike,
       amount: BigNumberish,
-      premium: BigNumberish,
-      arg3: AddressLike,
-      arg4: BytesLike
+      uniswapFee: BigNumberish
     ],
-    [boolean],
+    [[boolean, bigint]],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "getBalance"
-  ): TypedContractMethod<[token: AddressLike], [bigint], "view">;
+    nameOrSignature: "emergencyWithdraw"
+  ): TypedContractMethod<[token: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "executeArbitrage"
+  ): TypedContractMethod<
+    [
+      tokenIn: AddressLike,
+      tokenOut: AddressLike,
+      amount: BigNumberish,
+      uniswapFee: BigNumberish,
+      deadline: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "requestFlashLoan"
+    nameOrSignature: "receiveFlashLoan"
   ): TypedContractMethod<
-    [token: AddressLike, amount: BigNumberish],
+    [
+      tokens: AddressLike[],
+      amounts: BigNumberish[],
+      feeAmounts: BigNumberish[],
+      userData: BytesLike
+    ],
     [void],
     "nonpayable"
   >;
 
-  filters: {};
+  getEvent(
+    key: "ArbitrageExecuted"
+  ): TypedContractEvent<
+    ArbitrageExecutedEvent.InputTuple,
+    ArbitrageExecutedEvent.OutputTuple,
+    ArbitrageExecutedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PriceChecked"
+  ): TypedContractEvent<
+    PriceCheckedEvent.InputTuple,
+    PriceCheckedEvent.OutputTuple,
+    PriceCheckedEvent.OutputObject
+  >;
+
+  filters: {
+    "ArbitrageExecuted(address[],uint256[],uint256)": TypedContractEvent<
+      ArbitrageExecutedEvent.InputTuple,
+      ArbitrageExecutedEvent.OutputTuple,
+      ArbitrageExecutedEvent.OutputObject
+    >;
+    ArbitrageExecuted: TypedContractEvent<
+      ArbitrageExecutedEvent.InputTuple,
+      ArbitrageExecutedEvent.OutputTuple,
+      ArbitrageExecutedEvent.OutputObject
+    >;
+
+    "PriceChecked(address,address,uint256,uint256)": TypedContractEvent<
+      PriceCheckedEvent.InputTuple,
+      PriceCheckedEvent.OutputTuple,
+      PriceCheckedEvent.OutputObject
+    >;
+    PriceChecked: TypedContractEvent<
+      PriceCheckedEvent.InputTuple,
+      PriceCheckedEvent.OutputTuple,
+      PriceCheckedEvent.OutputObject
+    >;
+  };
 }
