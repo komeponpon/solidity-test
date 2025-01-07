@@ -3,6 +3,13 @@ import { parseEther } from 'viem'
 import { ARBITRAGE_CONTRACT_ADDRESS } from '../config/contracts'
 import { arbitrageABI } from '../config/abis'
 
+interface ExecuteArbitrageParams {
+  tokenA: string
+  tokenB: string
+  amount: string
+  uniswapFee: number
+}
+
 export function useArbitrage() {
   const { 
     writeContract,
@@ -12,15 +19,28 @@ export function useArbitrage() {
     isSuccess
   } = useContractWrite()
 
-  const executeArbitrage = async (tokenAddress: string, amount: string) => {
+  const executeArbitrage = async ({
+    tokenA,
+    tokenB,
+    amount,
+    uniswapFee
+  }: ExecuteArbitrageParams) => {
     if (!writeContract) throw new Error('Contract write not initialized')
+
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from now
 
     try {
       const tx = await writeContract({
         address: ARBITRAGE_CONTRACT_ADDRESS as `0x${string}`,
         abi: arbitrageABI,
-        functionName: 'requestFlashLoan',
-        args: [tokenAddress as `0x${string}`, parseEther(amount)]
+        functionName: 'executeArbitrage',
+        args: [
+          tokenA as `0x${string}`,
+          tokenB as `0x${string}`,
+          parseEther(amount),
+          uniswapFee,
+          BigInt(deadline)
+        ]
       })
       return tx
     } catch (err) {

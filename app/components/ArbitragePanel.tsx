@@ -1,30 +1,53 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { useArbitrage } from '../hooks/useArbitrage'
-import { SUPPORTED_TOKENS } from '../config/contracts'
+import { SUPPORTED_PAIRS } from '../config/contracts'
+import { injected } from 'wagmi/connectors'
 
 export function ArbitragePanel() {
   const { address: account } = useAccount()
-  const [selectedToken, setSelectedToken] = useState<string>(SUPPORTED_TOKENS.ETH)
+  const { connect } = useConnect()
+  const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0)
   const [amount, setAmount] = useState<string>('')
   const { executeArbitrage, isLoading, isSuccess, error } = useArbitrage()
 
+  const selectedPair = SUPPORTED_PAIRS[selectedPairIndex]
+
   const handleExecute = async () => {
-    if (!amount || !selectedToken || !account) return
+    if (!amount || !account) return
     
     try {
-      await executeArbitrage(selectedToken, amount)
+      await executeArbitrage({
+        tokenA: selectedPair.tokenA,
+        tokenB: selectedPair.tokenB,
+        amount,
+        uniswapFee: selectedPair.uniswapFee,
+      })
     } catch (err) {
       console.error('Failed to execute arbitrage:', err)
+    }
+  }
+
+  const handleConnect = async () => {
+    try {
+      await connect({ connector: injected() })
+    } catch (err) {
+      console.error('Failed to connect wallet:', err)
     }
   }
 
   if (!account) {
     return (
       <div className="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-lg">
-        <p className="text-center text-gray-600">Please connect your wallet</p>
+        <p className="text-center text-gray-600 mb-4">Please connect your wallet</p>
+        <button
+          onClick={handleConnect}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+        >
+          Connect Wallet
+        </button>
       </div>
     )
   }
@@ -35,16 +58,16 @@ export function ArbitragePanel() {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Select Token
+            Select Token Pair
           </label>
           <select
-            value={selectedToken}
-            onChange={(e) => setSelectedToken(e.target.value)}
+            value={selectedPairIndex}
+            onChange={(e) => setSelectedPairIndex(Number(e.target.value))}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            {Object.entries(SUPPORTED_TOKENS).map(([name, address]) => (
-              <option key={address} value={address}>
-                {name}
+            {SUPPORTED_PAIRS.map((pair, index) => (
+              <option key={pair.name} value={index}>
+                {pair.name}
               </option>
             ))}
           </select>
@@ -52,14 +75,14 @@ export function ArbitragePanel() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Amount
+            Flash Loan Amount ({selectedPair.name.split('/')[0]})
           </label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Enter amount"
+            placeholder={`Enter amount in ${selectedPair.name.split('/')[0]}`}
             min="0"
             step="0.000000000000000001"
           />
