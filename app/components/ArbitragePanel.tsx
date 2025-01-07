@@ -76,7 +76,9 @@ export function ArbitragePanel() {
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">フラッシュローン アービトラージ</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white text-center">
+        フラッシュローン アービトラージ
+      </h2>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">

@@ -23,6 +23,13 @@ const formatError = (error: unknown): string => {
   return 'エラーが発生しました'
 }
 
+// デッドラインの計算を関数として分離
+const calculateDeadline = () => {
+  // クライアントサイドでのみ実行
+  if (typeof window === 'undefined') return BigInt(0)
+  return BigInt(Math.floor(Date.now() / 1000) + 60 * 20) // 20分後
+}
+
 export function useArbitrage() {
   const publicClient = usePublicClient()
   const { 
@@ -41,8 +48,6 @@ export function useArbitrage() {
   }: ExecuteArbitrageParams) => {
     if (!writeContract) throw new Error('コントラクトの初期化に失敗しました')
 
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20分後
-
     try {
       const tx = await writeContract({
         abi: arbitrageABI,
@@ -53,7 +58,7 @@ export function useArbitrage() {
           tokenB as `0x${string}`,
           parseEther(amount),
           uniswapFee,
-          BigInt(deadline)
+          calculateDeadline()
         ]
       })
       return tx
@@ -76,7 +81,7 @@ export function useArbitrage() {
           params.tokenB as `0x${string}`,
           parseEther(params.amount),
           params.uniswapFee,
-          BigInt(Math.floor(Date.now() / 1000) + 60 * 20)
+          calculateDeadline()
         ]
       })
       return gasEstimate
