@@ -3,18 +3,12 @@ export const arbitrageABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "_addressProvider",
+        "name": "tokenIn",
         "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "address",
-        "name": "asset",
+        "name": "tokenOut",
         "type": "address"
       },
       {
@@ -23,29 +17,18 @@ export const arbitrageABI = [
         "type": "uint256"
       },
       {
+        "internalType": "uint24",
+        "name": "uniswapFee",
+        "type": "uint24"
+      },
+      {
         "internalType": "uint256",
-        "name": "premium",
+        "name": "deadline",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "initiator",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "params",
-        "type": "bytes"
       }
     ],
-    "name": "executeOperation",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "name": "executeArbitrage",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -53,12 +36,32 @@ export const arbitrageABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
+        "name": "tokenIn",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenOut",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint24"
+      },
+      {
+        "internalType": "uint24",
+        "name": "uniswapFee",
+        "type": "uint24"
       }
     ],
-    "name": "getBalance",
+    "name": "checkProfitability",
     "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      },
       {
         "internalType": "uint256",
         "name": "",
@@ -74,16 +77,24 @@ export const arbitrageABI = [
         "internalType": "address",
         "name": "token",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       }
     ],
-    "name": "requestFlashLoan",
+    "name": "emergencyWithdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ] 
