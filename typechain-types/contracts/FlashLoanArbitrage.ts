@@ -120,8 +120,8 @@ export interface FlashLoanArbitrage extends BaseContract {
       asset: AddressLike,
       amount: BigNumberish,
       premium: BigNumberish,
-      initiator: AddressLike,
-      params: BytesLike
+      arg3: AddressLike,
+      arg4: BytesLike
     ],
     [boolean],
     "nonpayable"
@@ -154,8 +154,8 @@ export interface FlashLoanArbitrage extends BaseContract {
       asset: AddressLike,
       amount: BigNumberish,
       premium: BigNumberish,
-      initiator: AddressLike,
-      params: BytesLike
+      arg3: AddressLike,
+      arg4: BytesLike
     ],
     [boolean],
     "nonpayable"
