@@ -6,6 +6,7 @@ import { useArbitrage } from '../hooks/useArbitrage'
 import { SUPPORTED_PAIRS } from '../config/contracts'
 import { injected } from 'wagmi/connectors'
 import { GasEstimate } from './GasEstimate'
+import { formatEther } from 'viem'
 
 export function ArbitragePanel() {
   const { address: account } = useAccount()
@@ -13,9 +14,21 @@ export function ArbitragePanel() {
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0)
   const [amount, setAmount] = useState<string>('')
   const [gasEstimate, setGasEstimate] = useState<bigint | null>(null)
-  const { executeArbitrage, estimateGas, isLoading, isSuccess, error } = useArbitrage()
-
+  
   const selectedPair = SUPPORTED_PAIRS[selectedPairIndex]
+  
+  const { 
+    executeArbitrage, 
+    estimateGas, 
+    isLoading, 
+    isSuccess, 
+    error, 
+    isOwner,
+    expectedProfit 
+  } = useArbitrage({
+    selectedPair,
+    amount
+  })
 
   useEffect(() => {
     if (!amount || !selectedPair) return
@@ -79,6 +92,10 @@ export function ArbitragePanel() {
     )
   }
 
+  const formattedProfit = expectedProfit 
+    ? formatEther(expectedProfit)
+    : '0'
+
   if (!account) {
     return (
       <div className="p-6 max-w-lg mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
@@ -98,6 +115,15 @@ export function ArbitragePanel() {
       <h2 className="text-2xl font-bold mb-4 text-white text-center">
         フラッシュローン アービトラージ
       </h2>
+      
+      {!isOwner && (
+        <div className="mb-4 p-4 bg-yellow-500/20 rounded-md">
+          <p className="text-yellow-300 text-sm">
+            ⚠️ このコントラクトはオーナーのみが実行できます
+          </p>
+        </div>
+      )}
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">
@@ -199,7 +225,10 @@ export function ArbitragePanel() {
 
         <GasEstimate gasEstimate={gasEstimate} />
 
-        <ProfitabilityIndicator isProfitable={true} expectedProfit="0.01" />
+        <ProfitabilityIndicator 
+          isProfitable={expectedProfit !== null && expectedProfit > 0n}
+          expectedProfit={Number(formattedProfit).toFixed(6)}
+        />
       </div>
     </div>
   )
